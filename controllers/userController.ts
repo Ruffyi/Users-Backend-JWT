@@ -1,8 +1,15 @@
 import { Request, Response } from 'express';
 
-const getAllUsers = (req: Request, res: Response) => {
+import User from './../model/userModel';
+
+const getAllUsers = async (req: Request, res: Response) => {
+	const allUsers = await User.find({});
+
 	res.send({
-		message: 'All users',
+		status: 'success',
+		data: {
+			allUsers,
+		},
 	});
 };
 
