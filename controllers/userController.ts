@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import expressAsyncHandler from 'express-async-handler';
 
 import User from './../model/userModel';
 
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = expressAsyncHandler(async (req: Request, res: Response) => {
 	const allUsers = await User.find({});
 
 	res.send({
@@ -11,6 +12,6 @@ const getAllUsers = async (req: Request, res: Response) => {
 			allUsers,
 		},
 	});
-};
+});
 
 export { getAllUsers };
