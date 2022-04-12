@@ -1,11 +1,15 @@
 import { Document } from 'mongoose';
 
-interface IUserModel extends Document {
+interface IUserModelMethods {
+	comparePassword: (candidatePassword: string, userPassword: string) => boolean;
+}
+
+interface IUserModel extends Document, IUserModelMethods {
 	name: string;
 	email: string;
 	photo?: string;
 	password: string;
-	passwordConfirm: string;
+	passwordConfirm: string | undefined;
 }
 
 export default IUserModel;
