@@ -2,6 +2,7 @@ import { Document } from 'mongoose';
 
 interface IUserModelMethods {
 	comparePassword: (candidatePassword: string, userPassword: string) => boolean;
+	changedPasswordAt: (JWTTimestamp: number) => boolean;
 }
 
 interface IUserModel extends Document, IUserModelMethods {
@@ -10,6 +11,7 @@ interface IUserModel extends Document, IUserModelMethods {
 	photo?: string;
 	password: string;
 	passwordConfirm: string | undefined;
+	passwordChangedAt?: Date;
 }
 
 export default IUserModel;

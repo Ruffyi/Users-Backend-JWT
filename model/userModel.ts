@@ -35,6 +35,9 @@ const userSchema: Schema = new Schema({
 			message: 'Passwords are not the same!',
 		},
 	},
+	passwordChangedAt: {
+		type: Date,
+	},
 });
 
 userSchema.pre<IUserModel>('save', async function (next) {
@@ -49,6 +52,14 @@ userSchema.methods.comparePassword = async function (
 	userPassword: string
 ) {
 	return bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAt = async function (JWTTimestamp: number) {
+	if (this.passwordChangedAt) {
+		const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
+		return JWTTimestamp > changedTimestamp;
+	}
+	return false;
 };
 
 const User: Model<IUserModel> = model('User', userSchema);
