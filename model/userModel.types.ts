@@ -12,6 +12,7 @@ interface IUserModel extends Document, IUserModelMethods {
 	password: string;
 	passwordConfirm: string | undefined;
 	passwordChangedAt?: Date;
+	role?: string;
 }
 
 export default IUserModel;

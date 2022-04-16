@@ -102,4 +102,13 @@ const protect = expressAsyncHandler(
 	}
 );
 
-export { signup, login, protect };
+const restrictTo = (...roles: string[]) => {
+	return (req: Request, res: Response, next: NextFunction) => {
+		if (!roles.includes(req.user.role)) {
+			return next(new CustomError('User not have a persist', 401));
+		}
+		next();
+	};
+};
+
+export { signup, login, protect, restrictTo };

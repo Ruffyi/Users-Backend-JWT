@@ -38,6 +38,11 @@ const userSchema: Schema = new Schema({
 	passwordChangedAt: {
 		type: Date,
 	},
+	role: {
+		type: String,
+		enum: ['user', 'guide', 'lead-guide', 'admin'],
+		default: 'user',
+	},
 });
 
 userSchema.pre<IUserModel>('save', async function (next) {
@@ -57,7 +62,7 @@ userSchema.methods.comparePassword = async function (
 userSchema.methods.changedPasswordAt = async function (JWTTimestamp: number) {
 	if (this.passwordChangedAt) {
 		const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
-		return JWTTimestamp > changedTimestamp;
+		return JWTTimestamp < changedTimestamp;
 	}
 	return false;
 };
