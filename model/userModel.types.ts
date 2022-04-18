@@ -12,8 +12,8 @@ interface IUserModel extends Document, IUserModelMethods {
 	photo?: string;
 	password: string;
 	passwordConfirm: string | undefined;
-	passwordChangedAt?: Date;
-	passwordResetToken?: string;
+	passwordChangedAt?: Date | undefined;
+	passwordResetToken?: string | undefined;
 	passwordResetExpires: Date;
 	role?: string;
 }

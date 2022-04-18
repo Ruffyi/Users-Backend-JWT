@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 import User from './../model/userModel';
+import sendMail from './../utils/email';
 
 import dotenv from 'dotenv';
 import CustomError from './../utils/CustomError';
@@ -120,9 +121,36 @@ const forgotPassword = expressAsyncHandler(
 			return next(new CustomError('User not exist', 404));
 		}
 
-		const resetToken = user.createPasswordToken();
+		const resetToken = await user.createPasswordToken();
 
 		await user.save({ validateBeforeSave: false });
+
+		const resetUrl = `${req.protocol}://${req.get(
+			'host'
+		)}/api/v1/users/resetPassword/${resetToken}`;
+		const message = `Forgot your password? Submit a patch request with your new password and passwordConfirm to: ${resetUrl}. If you didn't forget your password, ignore this email!`;
+
+		try {
+			await sendMail({
+				email: user.email,
+				subject: 'Your password reset token',
+				message,
+			});
+			res.status(200).send({
+				status: 'success',
+				message: 'Token send to email!',
+			});
+		} catch (err) {
+			user.passwordResetToken = undefined;
+			user.passwordResetExpires = undefined;
+			await user.save({ validateBeforeSave: false });
+			return next(
+				new CustomError(
+					'There was an error sending an email. Try again later!',
+					400
+				)
+			);
+		}
 	}
 );
 
