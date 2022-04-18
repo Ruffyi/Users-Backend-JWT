@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 interface IUserModelMethods {
 	comparePassword: (candidatePassword: string, userPassword: string) => boolean;
 	changedPasswordAt: (JWTTimestamp: number) => boolean;
+	createPasswordToken: () => string;
 }
 
 interface IUserModel extends Document, IUserModelMethods {
@@ -12,6 +13,8 @@ interface IUserModel extends Document, IUserModelMethods {
 	password: string;
 	passwordConfirm: string | undefined;
 	passwordChangedAt?: Date;
+	passwordResetToken?: string;
+	passwordResetExpires: Date;
 	role?: string;
 }
 

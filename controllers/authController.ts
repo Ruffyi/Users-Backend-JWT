@@ -111,4 +111,21 @@ const restrictTo = (...roles: string[]) => {
 	};
 };
 
-export { signup, login, protect, restrictTo };
+const forgotPassword = expressAsyncHandler(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const { email } = req.body;
+		const user = await User.findOne({ email });
+
+		if (!user) {
+			return next(new CustomError('User not exist', 404));
+		}
+
+		const resetToken = user.createPasswordToken();
+
+		await user.save({ validateBeforeSave: false });
+	}
+);
+
+const resetPassword = (req: Request, res: Response, next: NextFunction) => {};
+
+export { signup, login, protect, restrictTo, forgotPassword, resetPassword };

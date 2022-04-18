@@ -1,4 +1,5 @@
 import { Model, model, Schema } from 'mongoose';
+import crypto from 'crypto';
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 
@@ -38,6 +39,12 @@ const userSchema: Schema = new Schema({
 	passwordChangedAt: {
 		type: Date,
 	},
+	passwordResetToken: {
+		type: String,
+	},
+	passwordResetExpires: {
+		type: Date,
+	},
 	role: {
 		type: String,
 		enum: ['user', 'guide', 'lead-guide', 'admin'],
@@ -65,6 +72,21 @@ userSchema.methods.changedPasswordAt = async function (JWTTimestamp: number) {
 		return JWTTimestamp < changedTimestamp;
 	}
 	return false;
+};
+
+userSchema.methods.createPasswordToken = async function () {
+	const randomToken = crypto.randomBytes(32).toString('hex');
+
+	this.passwordResetToken = crypto
+		.createHash('sha256')
+		.update(randomToken)
+		.digest('hex');
+
+	console.log({ randomToken }, this.passwordResetToken);
+
+	this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+	return randomToken;
 };
 
 const User: Model<IUserModel> = model('User', userSchema);
